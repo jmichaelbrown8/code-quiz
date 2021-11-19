@@ -9,18 +9,8 @@ const questions = [
     },
     {
         question: "Choose the first alphabetical letter.",
-        choices: ["A", "B", "C", "D"],
-        answer: "A"
-    },
-    {
-        question: "Choose the first alphabetical letter.",
-        choices: ["A", "B", "C", "D"],
-        answer: "A"
-    },
-    {
-        question: "Choose the first alphabetical letter.",
-        choices: ["A", "B", "C", "D"],
-        answer: "A"
+        choices: ["E", "F", "G", "H"],
+        answer: "E"
     }
 ];
 
@@ -34,16 +24,16 @@ var intervalId;
 // score
 var score = 0;
 
-// scoreboard (in local storage)
+// leader board (in local storage)
 
-// nav toggle (to switch between game and scoreboard)
+// nav toggle (to switch between game and leader board)
 const navToggleEl = document.querySelector("#nav-toggle");
 
 // time left
 const timeLeftEl = document.querySelector("#time-left");
 
-// score
-const scoreEl = document.querySelector("#score");
+// score board
+const scoreBoardEl = document.querySelector("#score-board");
 
 // main element (where the messages and questions will display)
 const mainEl = document.querySelector("main");
@@ -52,6 +42,8 @@ const mainEl = document.querySelector("main");
  * Creates and displays the welcome message and the start button in the main element.
  */
 function displayStartMessage() {
+    clearMain();
+
     // h1 and p's to describe quiz, button to start quiz
     let h1El = document.createElement("h1");
     h1El.innerText = "Coding Quiz Challenge";
@@ -75,6 +67,106 @@ function displayStartMessage() {
 }
 
 /**
+ * Clears the main element, to get it ready for next content.
+ */
+function clearMain() {
+    mainEl.innerText = "";
+}
+
+/**
+ * Displays the next Question.
+ * @param {boolean} start Defines whether this is the first question or not.
+ * @returns void
+ */
+function displayNextQuestion(start) {
+    if (start) {
+        questionIndex = 0;
+    } else {
+        questionIndex++;
+    }
+    // check if was last question, and end quiz if so
+    if (questionIndex >= questions.length) {
+        return endQuiz();
+    }
+    // else clear main, then display the queestion and answer buttons
+    clearMain();
+    
+    let questionDescriptionEl = document.createElement("p");
+    questionDescriptionEl.textContent = "Question #" + (questionIndex + 1) + ": " + questions[questionIndex].question;
+    mainEl.appendChild(questionDescriptionEl);
+    
+    let choices = questions[questionIndex].choices;
+    for (var i = 0; i < choices.length; i++) {
+        let choice = choices[i];
+        let choiceButtonEl = document.createElement("button");
+        choiceButtonEl.textContent = choice;
+        choiceButtonEl.value = choice;
+        choiceButtonEl.addEventListener("click", testAnswer);
+        mainEl.appendChild(choiceButtonEl);
+    }
+    /**
+     * <p>question
+     * <button>...
+     */
+}
+
+/**
+ * This is the click event for the quiz answer buttons. It takes the value 
+ * and tests it against the current question's answer. If correct, it adds
+ * a point to the score. If incorrect, it removes time from the countdown.
+ * It then displays a brief message to the user and displays the next question.
+ * @param {object} event The click event from the buttom clicked.
+ */
+function testAnswer(event) {
+    let choice = event.currentTarget;
+    let value = choice.value;
+    let answer = questions[questionIndex].answer;
+
+    if (value === answer) {
+        // correct
+        score++;
+    }  else {
+        // incorrect
+        timeLeft -= 5;
+    }
+
+    displayScoreBoard();
+    displayTimeLeft();
+    displayNextQuestion();
+}
+
+/**
+ * Displays the quiz end message with results, allows a user to store their name 
+ * for the scoreboard
+ */
+function displayEndMessage() {
+    clearMain();
+
+    // h1 and p's to describe quiz, button to start quiz
+    let h1El = document.createElement("h1");
+    h1El.textContent = "Game Over!";
+    mainEl.appendChild(h1El);
+
+    let pEl = document.createElement("p");
+    pEl.textContent = "You answered " + score + " correct out of " + questions.length + " questions, with " + timeLeft + " seconds remaining.";
+    mainEl.appendChild(pEl);
+
+    let labelEl = document.createElement("label");
+    labelEl.textContent = "Your name";
+    labelEl.setAttribute("for", "name");
+    mainEl.appendChild(labelEl);
+
+    let inputEl = document.createElement("input");
+    inputEl.setAttribute("type", "text");
+    inputEl.setAttribute("id", "name");
+    mainEl.appendChild(inputEl);
+
+    let buttonEl = document.createElement("button");
+    buttonEl.textContent = "Submit";
+    mainEl.appendChild(buttonEl);
+}
+
+/**
  * Displays the current time in the time left element.
  */
 function countdownAndDisplayTimeLeft() {
@@ -94,17 +186,25 @@ function displayTimeLeft() {
 }
 
 /**
+ * Dislays the current scoreboard in the scoreboard element.
+ */
+function displayScoreBoard() {
+    scoreBoardEl.textContent = "Correct: " + score;
+}
+
+/**
  * Starts the game by displaying the first question and starting the countdown timer.
  */
 function startQuiz() {
     if (intervalId === undefined) {
-        timeLeft = 6;
+        timeLeft = 60;
+        questionIndex = 0;
         displayTimeLeft();
         startTimer();
+        displayNextQuestion(true);
     } else {
         console.warn("Already have a timer running with id: " + intervalId);
     }
-    
 }
 
 /**
@@ -112,6 +212,7 @@ function startQuiz() {
  */
 function endQuiz() {
     stopTimer();
+    displayEndMessage();
 }
 
 /**
@@ -128,20 +229,5 @@ function stopTimer() {
     clearInterval(intervalId);
     intervalId = undefined;
 }
-
-// What needs to be on the page:
-// welcome and description
-// start button
-// space for questions to be displayed
-// time left
-// score
-// link to scoreboard / back to game
-
-// What actions does my code need to do
-// start quiz (remove welcome/description, display first question, start timer)
-
-// answer a question (tallies score, decrements time if wrong, moves to next question until the end)
-
-// end game () (called when timer runs out, or final question is answered)
 
 displayStartMessage();
