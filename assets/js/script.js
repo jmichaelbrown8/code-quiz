@@ -52,6 +52,25 @@ const mainEl = document.querySelector("main");
  * Creates and displays the welcome message and the start button in the main element.
  */
 function displayStartMessage() {
+    // h1 and p's to describe quiz, button to start quiz
+    let h1El = document.createElement("h1");
+    h1El.innerText = "Coding Quiz Challenge";
+    
+    let p1El = document.createElement("p");
+    p1El.innerText = "This is a timed, multiple choice quiz to test your knowledge of some basic coding concepts.";
+    
+    let p2El = document.createElement("p");
+    p2El.innerText = "You will have 60 seconds to answer 10 multiple choice questions, but be careful--incorrect answers will subtract 10 seconds from your score!";
+    
+    let buttonEl = document.createElement("button");
+    buttonEl.innerText = "Start Quiz!";
+
+    buttonEl.addEventListener("click", startQuiz);
+
+    mainEl.append(h1El);
+    mainEl.appendChild(p1El);
+    mainEl.appendChild(p2El);
+    mainEl.appendChild(buttonEl);
 
 }
 
@@ -62,7 +81,7 @@ function countdownAndDisplayTimeLeft() {
     timeLeft--;
     if (timeLeft <= 0) {
         timeLeftEl.textContent = "BUZZZZ!!!!";
-        return endGame();
+        return endQuiz();
     }
     return displayTimeLeft();
 }
@@ -77,17 +96,21 @@ function displayTimeLeft() {
 /**
  * Starts the game by displaying the first question and starting the countdown timer.
  */
-function startGame() {
-    timeLeft = 6;
-    displayTimeLeft();
-    startTimer();
+function startQuiz() {
+    if (intervalId === undefined) {
+        timeLeft = 6;
+        displayTimeLeft();
+        startTimer();
+    } else {
+        console.warn("Already have a timer running with id: " + intervalId);
+    }
     
 }
 
 /**
  * Ends the game by clearing the timer, and displaying the final message.
  */
-function endGame() {
+function endQuiz() {
     stopTimer();
 }
 
@@ -95,12 +118,7 @@ function endGame() {
  * Start the countdown timer.
  */
 function startTimer() {
-    if (intervalId === undefined) {
-        intervalId = setInterval(countdownAndDisplayTimeLeft, 1000);
-    } else {
-        console.warn("Already have a timer running with id: " + intervalId);
-    }
-    
+    intervalId = setInterval(countdownAndDisplayTimeLeft, 1000);
 }
 
 /**
@@ -126,3 +144,4 @@ function stopTimer() {
 
 // end game () (called when timer runs out, or final question is answered)
 
+displayStartMessage();
