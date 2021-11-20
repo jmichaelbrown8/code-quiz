@@ -1,0 +1,38 @@
+* {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+}
+
+a {
+    color: rebeccapurple;
+    text-decoration: none;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 600px;
+    margin: auto;
+}
+
+button {
+    background-color: rebeccapurple;
+    color: white;
+}
+
+form > * {
+    margin-right: 10px;
+}
+
+main::after {
+    /* content: "Wrong! The answer was A"; */
+    border-top: 1px solid gray;
+    margin-top: 10px;
+    color: gray;
+    width: 100%;
+}

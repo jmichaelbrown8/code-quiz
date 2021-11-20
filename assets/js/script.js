@@ -24,9 +24,9 @@ var intervalId;
 // score
 var score = 0;
 
-// leader board (in local storage)
+// high scores (in local storage)
 
-// nav toggle (to switch between game and leader board)
+// nav toggle (to switch between game and high scores)
 const navToggleEl = document.querySelector("#nav-toggle");
 
 // time left
@@ -37,6 +37,15 @@ const scoreBoardEl = document.querySelector("#score-board");
 
 // main element (where the messages and questions will display)
 const mainEl = document.querySelector("main");
+
+/* TODO: writing a single click event will prevent me from attaching a ton of event listeners
+function handleClick(event) {
+    let el = event.target;
+    console.log(event);
+    console.log(el);
+}
+mainEl.addEventListener("click", handleClick, true)
+*/
 
 /**
  * Creates and displays the welcome message and the start button in the main element.
@@ -90,10 +99,10 @@ function displayNextQuestion(start) {
     }
     // else clear main, then display the queestion and answer buttons
     clearMain();
-    
-    let questionDescriptionEl = document.createElement("p");
-    questionDescriptionEl.textContent = "Question #" + (questionIndex + 1) + ": " + questions[questionIndex].question;
-    mainEl.appendChild(questionDescriptionEl);
+
+    let h1El = document.createElement('h1');
+    h1El.textContent = (questionIndex + 1) + ") " + questions[questionIndex].question;
+    mainEl.appendChild(h1El);
     
     let choices = questions[questionIndex].choices;
     for (var i = 0; i < choices.length; i++) {
@@ -104,10 +113,7 @@ function displayNextQuestion(start) {
         choiceButtonEl.addEventListener("click", testAnswer);
         mainEl.appendChild(choiceButtonEl);
     }
-    /**
-     * <p>question
-     * <button>...
-     */
+
 }
 
 /**
@@ -115,7 +121,7 @@ function displayNextQuestion(start) {
  * and tests it against the current question's answer. If correct, it adds
  * a point to the score. If incorrect, it removes time from the countdown.
  * It then displays a brief message to the user and displays the next question.
- * @param {object} event The click event from the buttom clicked.
+ * @param {object} event The click event from the button clicked.
  */
 function testAnswer(event) {
     let choice = event.currentTarget;
@@ -144,26 +150,29 @@ function displayEndMessage() {
 
     // h1 and p's to describe quiz, button to start quiz
     let h1El = document.createElement("h1");
-    h1El.textContent = "Game Over!";
+    h1El.textContent = "All done!";
     mainEl.appendChild(h1El);
 
     let pEl = document.createElement("p");
     pEl.textContent = "You answered " + score + " correct out of " + questions.length + " questions, with " + timeLeft + " seconds remaining.";
     mainEl.appendChild(pEl);
 
+    let formEl = document.createElement("form");
+    mainEl.appendChild(formEl);
+
     let labelEl = document.createElement("label");
     labelEl.textContent = "Your name";
     labelEl.setAttribute("for", "name");
-    mainEl.appendChild(labelEl);
+    formEl.appendChild(labelEl);
 
     let inputEl = document.createElement("input");
     inputEl.setAttribute("type", "text");
     inputEl.setAttribute("id", "name");
-    mainEl.appendChild(inputEl);
+    formEl.appendChild(inputEl);
 
     let buttonEl = document.createElement("button");
     buttonEl.textContent = "Submit";
-    mainEl.appendChild(buttonEl);
+    formEl.appendChild(buttonEl);
 }
 
 /**
@@ -205,6 +214,7 @@ function startQuiz() {
     } else {
         console.warn("Already have a timer running with id: " + intervalId);
     }
+
 }
 
 /**
@@ -231,3 +241,5 @@ function stopTimer() {
 }
 
 displayStartMessage();
+displayScoreBoard();
+displayTimeLeft();
