@@ -1,3 +1,5 @@
+/* Header Styles */
+
 * {
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -12,6 +14,8 @@ a {
     text-decoration: none;
 }
 
+/* Main Styles */
+
 main {
     display: flex;
     flex-direction: column;
@@ -25,14 +29,35 @@ button {
     color: white;
 }
 
-form > * {
-    margin-right: 10px;
-}
-
 main::after {
     /* content: "Wrong! The answer was A"; */
     border-top: 1px solid gray;
     margin-top: 10px;
     color: gray;
     width: 100%;
+}
+
+form > * {
+    margin-right: 10px;
+}
+
+/* High Scores Styles */
+
+ol {
+    width: 100%;
+    padding: 0;
+}
+
+li:nth-child(odd) {
+    background-color: rgba(102, 51, 153, 0.2);
+}
+
+li {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+li > span:nth-child(2) {
+    cursor: help;
 }

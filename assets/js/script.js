@@ -9,7 +9,12 @@ const questions = [
         question: "Choose the first alphabetical letter.",
         choices: ["E", "F", "G", "H"],
         answer: "E"
-    }
+    },
+    {
+        question: "Choose the first alphabetical letter.",
+        choices: ["A", "B", "C", "D"],
+        answer: "A"
+    },
 ];
 
 /** Which question the user is on */
@@ -157,7 +162,7 @@ function displayEndMessage() {
     let formEl = document.createElement("form");
     mainEl.appendChild(formEl);
     formEl.addEventListener("submit", addScore);
-    formEl.addEventListener("submit", displayHighScores);
+    formEl.addEventListener("submit", displayHighScores); // since this happens second, you need to prevent default here
 
     let labelEl = document.createElement("label");
     labelEl.textContent = "Your name";
@@ -229,7 +234,7 @@ function stopTimer() {
 }
 
 /** Adds a score, sorted in the list, and stores the high score list in localStorage. */
-function addScore() {
+function addScore(e) {
     getHighScores();
     let nameEl = document.querySelector("input");
     let name = nameEl.value;
@@ -263,7 +268,11 @@ function addScore() {
 }
 
 /** Displays the high score list. */
-function displayHighScores() {
+function displayHighScores(e) {
+    if (typeof e === "object") {
+        e.preventDefault(); // needed to stop the warning about form not being connected
+    }
+
     getHighScores();
     clearMain();
 
@@ -279,20 +288,34 @@ function displayHighScores() {
     for (var i = 0; i < highScores.length; i++) {
         let thisScore = highScores[i];
         let liEl = document.createElement("li");
-        liEl.innerHTML = "<span>" + thisScore.name + "</span><span>" + thisScore.score + "</span><span>" + thisScore.timeLeft + "s</span>";
+
+        let nameSpanEl = document.createElement("span");
+        nameSpanEl.innerText = (i + 1) + ". " + thisScore.name;
+        liEl.appendChild(nameSpanEl);
+
+        let scoreSpanEl = document.createElement("span");
+        scoreSpanEl.innerText = Math.floor(thisScore.score / questions.length * 100) + "%";
+        scoreSpanEl.title = "With " + thisScore.timeLeft + "s remaining";
+        liEl.appendChild(scoreSpanEl);
+
         olEl.appendChild(liEl);
     }
     
     // buttons to go back to start a new quiz or clear the high scores
+    let buttonDivEl = document.createElement("div");
+    buttonDivEl.style = "width: 100%; display: flex; justify-content: space-between;";
+
     let goBackButtonEl = document.createElement("button");
     goBackButtonEl.textContent = "Go Back";
     goBackButtonEl.addEventListener("click", displayStartMessage);
-    mainEl.appendChild(goBackButtonEl);
+    buttonDivEl.appendChild(goBackButtonEl);
 
     let clearButtonEl = document.createElement("button");
     clearButtonEl.textContent = "Clear High Scores";
     clearButtonEl.addEventListener("click", clearHighScores);
-    mainEl.appendChild(clearButtonEl);
+    buttonDivEl.appendChild(clearButtonEl);
+
+    mainEl.appendChild(buttonDivEl);
 
 }   
 
