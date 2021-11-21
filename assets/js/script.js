@@ -1,19 +1,34 @@
 /** Array of question objects */
 const questions = [
     {
-        question: "Choose the first alphabetical letter.",
-        choices: ["A", "B", "C", "D"],
-        answer: "A"
+        question: "How do we access the element we are listening from?",
+        choices: ["event.target", "event.currentTarget", "event.element", "event.currentNode"],
+        answer: "event.currentTarget"
     },
     {
-        question: "Choose the first alphabetical letter.",
-        choices: ["E", "F", "G", "H"],
-        answer: "E"
+        question: 'Which method will select the div element with id="card"?',
+        choices: ['document.getElementById("card")', 'document.querySelector("div#card")', 'document.querySelectorAll("#card")[0]', "All of the above"],
+        answer: "All of the above"
     },
     {
-        question: "Choose the first alphabetical letter.",
-        choices: ["A", "B", "C", "D"],
-        answer: "A"
+        question: 'Which selector will have the highest specificity?',
+        choices: ["div.class1.class2", "div", ".class1.class2", "#id"],
+        answer: "#id"
+    },
+    {
+        question: 'Which array method adds items to the front?',
+        choices: ["push", "pop", "shift", "unshift"],
+        answer: "unshift"
+    },
+    {
+        question: 'Which array method allows you to add an item to a specific index?',
+        choices: ["slice", "splice", "concat", "insert"],
+        answer: "splice"
+    },
+    {
+        question: 'What is the outermost part of the box model?',
+        choices: ["border", "padding", "outline", "margin"],
+        answer: "margin"
     },
 ];
 
