@@ -1,6 +1,4 @@
-// variables to store data
-
-// store the questions in an array of objects
+/** Array of question objects */
 const questions = [
     {
         question: "Choose the first alphabetical letter.",
@@ -14,28 +12,30 @@ const questions = [
     }
 ];
 
-// which question the user is on
+/** Which question the user is on */
 var questionIndex = 0;
 
-// time left
+/** Time left on the user's current quiz. */
 var timeLeft = 0;
 var intervalId;
 
-// score
+/** The user's current score. */
 var score = 0;
 
-// high scores (in local storage)
+/** High scores object. */
+var highScores;
 
-// nav toggle (to switch between game and high scores)
+/** nav toggle (to switch between game and high scores) */
 const navToggleEl = document.querySelector("#nav-toggle");
+navToggleEl.addEventListener("click", displayHighScores);
 
-// time left
+/** time left */
 const timeLeftEl = document.querySelector("#time-left");
 
-// score board
+/** score board */
 const scoreBoardEl = document.querySelector("#score-board");
 
-// main element (where the messages and questions will display)
+/** main element (where the messages and questions will display) */
 const mainEl = document.querySelector("main");
 
 /* TODO: writing a single click event will prevent me from attaching a ton of event listeners
@@ -47,11 +47,13 @@ function handleClick(event) {
 mainEl.addEventListener("click", handleClick, true)
 */
 
-/**
- * Creates and displays the welcome message and the start button in the main element.
- */
+/** Creates and displays the welcome message and the start button in the main element. */
 function displayStartMessage() {
     clearMain();
+    score = 0
+    timeLeft = 0;
+
+    navToggleEl.style.visibility = "visible";
 
     // h1 and p's to describe quiz, button to start quiz
     let h1El = document.createElement("h1");
@@ -75,9 +77,7 @@ function displayStartMessage() {
 
 }
 
-/**
- * Clears the main element, to get it ready for next content.
- */
+/** Clears the main element, to get it ready for next content. */
 function clearMain() {
     mainEl.innerText = "";
 }
@@ -133,7 +133,7 @@ function testAnswer(event) {
         score++;
     }  else {
         // incorrect
-        timeLeft -= 5;
+        timeLeft -= 10;
     }
 
     displayScoreBoard();
@@ -141,10 +141,7 @@ function testAnswer(event) {
     displayNextQuestion();
 }
 
-/**
- * Displays the quiz end message with results, allows a user to store their name 
- * for the scoreboard
- */
+/** Displays the quiz end message with results, and allows a user to store their name for the scoreboard. */
 function displayEndMessage() {
     clearMain();
 
@@ -159,6 +156,8 @@ function displayEndMessage() {
 
     let formEl = document.createElement("form");
     mainEl.appendChild(formEl);
+    formEl.addEventListener("submit", addScore);
+    formEl.addEventListener("submit", displayHighScores);
 
     let labelEl = document.createElement("label");
     labelEl.textContent = "Your name";
@@ -172,12 +171,11 @@ function displayEndMessage() {
 
     let buttonEl = document.createElement("button");
     buttonEl.textContent = "Submit";
+    buttonEl.type = "submit";
     formEl.appendChild(buttonEl);
 }
 
-/**
- * Displays the current time in the time left element.
- */
+/** Displays the current time in the time left element. */
 function countdownAndDisplayTimeLeft() {
     timeLeft--;
     if (timeLeft <= 0) {
@@ -187,28 +185,24 @@ function countdownAndDisplayTimeLeft() {
     return displayTimeLeft();
 }
 
-/**
- * Displays the current time in the time left element.
- */
+/** Displays the current time in the time left element. */
 function displayTimeLeft() {
     timeLeftEl.textContent = "Time left: " + timeLeft + "s";
 }
 
-/**
- * Dislays the current scoreboard in the scoreboard element.
- */
+/** Dislays the current scoreboard in the scoreboard element. */
 function displayScoreBoard() {
     scoreBoardEl.textContent = "Correct: " + score;
 }
 
-/**
- * Starts the game by displaying the first question and starting the countdown timer.
- */
+/** Starts the quiz by displaying the first question and starting the countdown timer. */
 function startQuiz() {
     if (intervalId === undefined) {
         timeLeft = 60;
+        score = 0;
         questionIndex = 0;
         displayTimeLeft();
+        displayScoreBoard();
         startTimer();
         displayNextQuestion(true);
     } else {
@@ -217,27 +211,109 @@ function startQuiz() {
 
 }
 
-/**
- * Ends the game by clearing the timer, and displaying the final message.
- */
+/** Ends the game by clearing the timer, and displaying the final message. */
 function endQuiz() {
     stopTimer();
     displayEndMessage();
 }
 
-/**
- * Start the countdown timer.
- */
+/** Starts the countdown timer. */
 function startTimer() {
     intervalId = setInterval(countdownAndDisplayTimeLeft, 1000);
 }
 
-/**
- * Stop the countdown timer. 
- */
+/** Stops the countdown timer. */
 function stopTimer() {
     clearInterval(intervalId);
     intervalId = undefined;
+}
+
+/** Adds a score, sorted in the list, and stores the high score list in localStorage. */
+function addScore() {
+    getHighScores();
+    let nameEl = document.querySelector("input");
+    let name = nameEl.value;
+    let thisScore = {
+        name: name,
+        score: score,
+        timeLeft: timeLeft
+    };
+
+    let added = false;
+
+    // Add into list at right place
+    for (var i = 0; i < highScores.length; i++) {
+        let listScoreItem = highScores[i];
+        if (thisScore.score > listScoreItem.score) {
+            highScores.splice(i, 0, thisScore);
+            added = true;
+            break;
+        } else if (thisScore.score === listScoreItem.score && thisScore.timeLeft >= listScoreItem.timeLeft) {
+            highScores.splice(i, 0, thisScore);
+            added = true;
+            break;
+        }
+    }
+
+    // If you made it here, you haven't added the score to the list yet because it's the lowest score. Just stick it on the end.
+    if (!added) {
+        highScores.push(thisScore);
+    }
+    setHighScores(); // stores in localStorage
+}
+
+/** Displays the high score list. */
+function displayHighScores() {
+    getHighScores();
+    clearMain();
+
+    navToggleEl.style.visibility = "hidden";
+
+    let h1El = document.createElement("h1");
+    h1El.textContent = "High Scores";
+    mainEl.appendChild(h1El);
+
+    let olEl = document.createElement("ol");
+    mainEl.appendChild(olEl);
+
+    for (var i = 0; i < highScores.length; i++) {
+        let thisScore = highScores[i];
+        let liEl = document.createElement("li");
+        liEl.innerHTML = "<span>" + thisScore.name + "</span><span>" + thisScore.score + "</span><span>" + thisScore.timeLeft + "s</span>";
+        olEl.appendChild(liEl);
+    }
+    
+    // buttons to go back to start a new quiz or clear the high scores
+    let goBackButtonEl = document.createElement("button");
+    goBackButtonEl.textContent = "Go Back";
+    goBackButtonEl.addEventListener("click", displayStartMessage);
+    mainEl.appendChild(goBackButtonEl);
+
+    let clearButtonEl = document.createElement("button");
+    clearButtonEl.textContent = "Clear High Scores";
+    clearButtonEl.addEventListener("click", clearHighScores);
+    mainEl.appendChild(clearButtonEl);
+
+}   
+
+/** Gets the high score list from localStorage, stores in the global highScores variable. */
+function getHighScores() {
+    highScores = JSON.parse(localStorage.getItem('highScores'));
+
+    if (highScores === null) {
+        highScores = [];
+    }
+}
+
+/** Sets highScores into localstorage */
+function setHighScores() {
+    localStorage.setItem("highScores", JSON.stringify(highScores));
+}
+
+/** Clears localStorage (and the high scores along with it). */
+function clearHighScores() {
+    localStorage.clear();
+    displayHighScores();
 }
 
 displayStartMessage();
