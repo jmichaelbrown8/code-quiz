@@ -80,10 +80,10 @@ function displayStartMessage() {
     h1El.innerText = "Coding Quiz Challenge";
     
     let p1El = document.createElement("p");
-    p1El.innerText = "This is a timed, multiple choice quiz to test your knowledge of some basic coding concepts.";
+    p1El.innerText = "This is a timed, multiple choice quiz to test your knowledge of some HTML, CSS, and JS details.";
     
     let p2El = document.createElement("p");
-    p2El.innerText = "You will have 60 seconds to answer 10 multiple choice questions, but be careful--incorrect answers will subtract 10 seconds from your score!";
+    p2El.innerText = "You will have 60 seconds to answer 10 multiple choice questions, but be careful--incorrect answers will subtract 10 seconds from your time!";
     
     let buttonEl = document.createElement("button");
     buttonEl.innerText = "Start Quiz!";
