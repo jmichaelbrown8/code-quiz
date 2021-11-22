@@ -58,14 +58,33 @@ const scoreBoardEl = document.querySelector("#score-board");
 /** main element (where the messages and questions will display) */
 const mainEl = document.querySelector("main");
 
-/* TODO: writing a single click event will prevent me from attaching a ton of event listeners
+/** single click */
 function handleClick(event) {
     let el = event.target;
-    console.log(event);
-    console.log(el);
+    if (el.tagName !== "BUTTON") {
+        return;
+    }
+
+    switch (el.innerText) {
+        case "Start Quiz!":
+            startQuiz();
+            break;
+        case "Submit":
+            addScore();
+            displayHighScores(event);
+            break;
+        case "Go Back":
+            displayStartMessage();
+            break;
+        case "Clear High Scores":
+            clearHighScores();
+            break;
+        default: // answer buttons
+            testAnswer(event);
+    }
 }
-mainEl.addEventListener("click", handleClick, true)
-*/
+
+mainEl.addEventListener("click", handleClick)
 
 /** Creates and displays the welcome message and the start button in the main element. */
 function displayStartMessage() {
@@ -87,8 +106,6 @@ function displayStartMessage() {
     
     let buttonEl = document.createElement("button");
     buttonEl.innerText = "Start Quiz!";
-
-    buttonEl.addEventListener("click", startQuiz);
 
     mainEl.append(h1El);
     mainEl.appendChild(p1El);
@@ -130,7 +147,6 @@ function displayNextQuestion(start) {
         let choiceButtonEl = document.createElement("button");
         choiceButtonEl.textContent = choice;
         choiceButtonEl.value = choice;
-        choiceButtonEl.addEventListener("click", testAnswer);
         mainEl.appendChild(choiceButtonEl);
     }
 
@@ -144,7 +160,7 @@ function displayNextQuestion(start) {
  * @param {object} event The click event from the button clicked.
  */
 function testAnswer(event) {
-    let choice = event.currentTarget;
+    let choice = event.target;
     let value = choice.value;
     let answer = questions[questionIndex].answer;
 
@@ -206,8 +222,6 @@ function displayEndMessage() {
 
     let formEl = document.createElement("form");
     mainEl.appendChild(formEl);
-    formEl.addEventListener("submit", addScore);
-    formEl.addEventListener("submit", displayHighScores); // since this happens second, you need to prevent default here
 
     let labelEl = document.createElement("label");
     labelEl.textContent = "Your name";
@@ -352,12 +366,10 @@ function displayHighScores(e) {
 
     let goBackButtonEl = document.createElement("button");
     goBackButtonEl.textContent = "Go Back";
-    goBackButtonEl.addEventListener("click", displayStartMessage);
     buttonDivEl.appendChild(goBackButtonEl);
 
     let clearButtonEl = document.createElement("button");
     clearButtonEl.textContent = "Clear High Scores";
-    clearButtonEl.addEventListener("click", clearHighScores);
     buttonDivEl.appendChild(clearButtonEl);
 
     mainEl.appendChild(buttonDivEl);
