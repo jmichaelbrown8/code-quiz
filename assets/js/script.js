@@ -58,7 +58,7 @@ const scoreBoardEl = document.querySelector("#score-board");
 /** main element (where the messages and questions will display) */
 const mainEl = document.querySelector("main");
 
-/** single click */
+/** This function registers the actions for each button created on the page, so only one event listener is required. */
 function handleClick(event) {
     let el = event.target;
     if (el.tagName !== "BUTTON") {
