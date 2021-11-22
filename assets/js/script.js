@@ -151,14 +151,44 @@ function testAnswer(event) {
     if (value === answer) {
         // correct
         score++;
+        displayEphemeralMessage("Correct!", "rebeccapurple");
     }  else {
         // incorrect
         timeLeft -= 10;
+        displayEphemeralMessage("Incorrect...");
     }
 
     displayScoreBoard();
     displayTimeLeft();
     displayNextQuestion();
+}
+
+/** Displays a message that lasts a few seconds and fades out */
+function displayEphemeralMessage(text, color) {
+    // If the user is quick, clear out any elements that are still on the page
+    let oldEphemeralMessageEl = document.querySelector(".ephemeral-message");
+    if (oldEphemeralMessageEl) {
+        oldEphemeralMessageEl.remove();
+    }
+
+    let ephemeralMessageEl = document.createElement("div");
+    ephemeralMessageEl.className = "ephemeral-message";
+    ephemeralMessageEl.textContent = text;
+    mainEl.after(ephemeralMessageEl);
+
+    if (color) {
+        ephemeralMessageEl.style.color = color;
+    }
+    
+    // sets the opacity to 0 after 1 second (to start the 0.5-second transition in style.css)
+    setTimeout(function() {
+        ephemeralMessageEl.style.opacity = 0;
+    }, 1000);
+
+    // Removes the element after 3 seconds
+    setTimeout(function() {
+        ephemeralMessageEl.remove();
+    }, 2000)
 }
 
 /** Displays the quiz end message with results, and allows a user to store their name for the scoreboard. */
