@@ -185,7 +185,7 @@ function displayEphemeralMessage(text, color) {
         ephemeralMessageEl.style.opacity = 0;
     }, 1000);
 
-    // Removes the element after 3 seconds
+    // Removes the element after 2 seconds
     setTimeout(function() {
         ephemeralMessageEl.remove();
     }, 2000)
